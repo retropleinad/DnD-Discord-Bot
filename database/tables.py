@@ -1,7 +1,5 @@
 import sqlite3
 
-temp_path = "database/campaign.db"
-
 """
 This file holds the CREATE TABLE sqlite commands to build the database. 
 
@@ -16,16 +14,17 @@ Tables:
 
 """
 
+temp_path = "database/campaign.db"
 
-def create_location():
-    region_table = """
+tables = (
+    """
         CREATE TABLE region (
             region_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL UNIQUE,
             description TEXT
         )
+    """,
     """
-    location_table = """
         CREATE TABLE location (
             location_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
@@ -33,11 +32,8 @@ def create_location():
             region INTEGER,
             FOREIGN KEY(region) REFERENCES region(region_id)
         )
+    """,
     """
-
-
-def create_organization():
-    organization_table = """
         CREATE TABLE organization (
             organization_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
@@ -47,11 +43,8 @@ def create_organization():
             FOREIGN KEY(region) REFERENCES region(region_id),
             FOREIGN KEY(headquarters) REFERENCES location(location_id)
         ) 
+    """,
     """
-
-
-def create_pcs():
-    class_table = """
         CREATE TABLE class (
             class_id INTEGER PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
@@ -59,15 +52,14 @@ def create_pcs():
             source TEXT,
             page INTEGER
         )
+    """,
     """
-    pcs_table = """
         CREATE TABLE pcs (
             pc_id INTEGER PRIMARY KEY,
             player TEXT NOT NULL,
             name TEXT NOT NULL,
             description TEXT,
             alive BOOL DEFAULT TRUE,
-            picture BLOB,
             class INTEGER,
             origin INTEGER,
             area INTEGER,
@@ -75,15 +67,42 @@ def create_pcs():
             FOREIGN KEY(origin) REFERENCES region(region_id),
             FOREIGN KEY(area) REFERENCES region(region_id)
         )
+    """,
     """
-
-
-def create_npcs():
-    npc_table = """
         CREATE TABLE npcs (
             npc_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             description TEXT,
-            residence INTEGER,
+            region INTEGER,
+            headquarters INTEGER,
+            FOREIGN KEY(region) REFERENCES region(region_id),
+            FOREIGN KEY(headquarters) REFERENCES location(location_id)
         )
+    """,
     """
+        CREATE TABLE items (
+            item_id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            description TEXT,
+        )
+    """,
+    """
+        CREATE TABLE item_owner (
+            owner_id INTEGER PRIMARY KEY,
+            item INTEGER NOT NULL,
+            pc INTEGER,
+            npc INTEGER,
+            organization INTEGER,
+            FOREIGN KEY(item) references items(item_id),
+            FOREIGN KEY(pc) references pcs(pc_id),
+            FOREIGN KEY(npc) references npcs(npc_id),
+            FOREIGN KEY(organization) references organization(organization_id)
+    """
+)
+
+connection = sqlite3.connect(temp_path)
+
+for table in tables:
+    connection.execute(table)
+
+connection.close()
