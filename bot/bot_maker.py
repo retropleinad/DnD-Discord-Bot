@@ -5,7 +5,7 @@ from discord.ext import commands
 
 from dotenv import load_dotenv
 
-TOKEN = "ODE4NjI0MTQ0MTE4Nzc1ODA5.YEaxJQ.L-WmR64YCcsjECV-a-a_pxaP-7k"
+TOKEN = ""
 bot = commands.Bot(command_prefix="!")
 
 
@@ -16,8 +16,9 @@ async def on_ready():
 
 @bot.command(name="yo")
 async def yo(ctx):
-    await ctx.send("yo")
-
+    await ctx.send("Enter a number")
+    test = bot.wait_for("message", timeout=30)
+    await ctx.send(test)
 
 bot.run(TOKEN)
 
