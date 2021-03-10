@@ -1,4 +1,5 @@
 import os
+import sqlite3
 
 import discord
 from discord.ext import commands
@@ -6,6 +7,8 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from database import inserts
+from database import selects
+from database import deletes
 
 TOKEN = ""
 bot = commands.Bot(command_prefix="!")
@@ -16,17 +19,8 @@ async def on_ready():
     print(f'{bot.user} has connected to Discord!')
 
 
-@bot.command(name="yo")
-async def yo(ctx):
-    await ctx.send("Enter a number")
-    num = await bot.wait_for("Message", timeout=30)
-    await ctx.send(num)
-
-
-@bot.command(name="animal")
-async def animal(ctx, *args):
-    for arg in args:
-        await ctx.send(arg)
+INVALID_CATEGORY = "Please choose an acceptable category. Available categories are : " \
+                           "region, location, organization, class, player-characters, npcs, items, and item-owner"
 
 
 @bot.command(name="new")
@@ -51,10 +45,40 @@ async def new(ctx, table, *args):
         elif table == "item-owner":
             pass
         else:
-            await ctx.send("Please choose an acceptable category. Available categories are : "
-                           "region, location, organization, class, player-characters, npcs, items, and item-owner")
+            await ctx.send(INVALID_CATEGORY)
     except IndexError:
         await ctx.send("Please enter the correct amount of information for the category.")
+
+
+@bot.command(name="list-all")
+async def list_all(ctx, table):
+    try:
+        select = selects.select_all(table)
+
+        titles = select["titles"]
+        title_string = " | "
+        for title in titles:
+            title_string += title + " | "
+        await ctx.send(title_string)
+
+        data = select["data"]
+        for entry in data:
+            entry_string = " | "
+            for point in entry:
+                entry_string += str(point) + " | "
+            await ctx.send(entry_string)
+
+    except sqlite3.OperationalError:
+        await ctx.send(INVALID_CATEGORY)
+
+
+@bot.command(name="delete-all")
+async def delete_all(ctx, table):
+    try:
+        deletes.delete_all(table)
+        await ctx.send("Successfully deleted all from: " + table)
+    except sqlite3.OperationalError:
+        await ctx.send(INVALID_CATEGORY)
 
 
 bot.run(TOKEN)
