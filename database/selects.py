@@ -1,6 +1,8 @@
 import sqlite3
 
-temp_path = "../bot/campaign.db"
+from . import util
+
+path = util.PATH
 
 
 def select_all(table):
@@ -9,7 +11,7 @@ def select_all(table):
     """
     query = query.format(table)
 
-    connection = sqlite3.connect(temp_path)
+    connection = sqlite3.connect(path)
     cursor = connection.cursor()
     cursor.execute(query)
 
@@ -23,8 +25,17 @@ def select_all(table):
     }
 
 
-def select(table, condition):
+def select(table, **kwargs):
     query = """
             SELECT * FROM {0}
-            WHERE 
+            WHERE
     """
+    query = query.format(table)
+    query = util.add_conditions(query, **kwargs)
+
+    connection = sqlite3.connect(path)
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    data = cursor.fetchall()
+    return data

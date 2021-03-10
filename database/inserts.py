@@ -1,13 +1,6 @@
-import sqlite3
+from . import util
 
-temp_path = "../bot/campaign.db"
-
-
-def commit_insert(query, args):
-    connection = sqlite3.connect(temp_path)
-    connection.execute(query, args)
-    connection.commit()
-    connection.close()
+path = util.PATH
 
 
 def insert_region(name, description):
@@ -16,7 +9,7 @@ def insert_region(name, description):
             INSERT INTO region(name, description)
             VALUES (?, ?)
     """
-    commit_insert(query, args)
+    util.commit_query(query, args)
 
 
 def insert_location(name, description, region="NULL"):
@@ -25,7 +18,7 @@ def insert_location(name, description, region="NULL"):
             INSERT INTO location(name, description, region)
             VALUES (?, ?, ?)        
     """
-    commit_insert(query, args)
+    util.commit_query(query, args)
 
 
 def insert_organization(name, description, region, headquarters):
@@ -34,7 +27,7 @@ def insert_organization(name, description, region, headquarters):
             INSERT INTO organization(name, description, region, headquarters)
             VALUES (?, ?, ?, ?)
     """
-    commit_insert(query, args)
+    util.commit_query(query, args)
 
 
 def insert_class(name, description, source, page):
@@ -43,7 +36,7 @@ def insert_class(name, description, source, page):
             INSERT INTO class(name, description, source, page)
             VALUES (?, ?, ?, ?)
     """
-    commit_insert(query, args)
+    util.commit_query(query, args)
 
 
 def insert_pcs(player, name, description, alive, dnd_class, origin, area):
@@ -52,7 +45,7 @@ def insert_pcs(player, name, description, alive, dnd_class, origin, area):
             INSERT INTO pcs(player, name, description, alive, class, origin, area)
             VALUES (?, ?, ?, ?, ?, ?, ?)
     """
-    commit_insert(query, args)
+    util.commit_query(query, args)
 
 
 def insert_npcs(name, description, region, headquarters):
@@ -61,7 +54,7 @@ def insert_npcs(name, description, region, headquarters):
             INSERT INTO npcs(name, description, region, headquarters)
             VALUES (?, ?, ?, ?)
     """
-    commit_insert(query, args)
+    util.commit_query(query, args)
 
 
 def insert_item(name, description):
@@ -70,7 +63,7 @@ def insert_item(name, description):
             INSERT INTO items(name, description)
             VALUES (?, ?)
     """
-    commit_insert(query, args)
+    util.commit_query(query, args)
 
 
 def insert_owner(item, pc, npc, organization):
@@ -79,4 +72,4 @@ def insert_owner(item, pc, npc, organization):
             INSERT INTO item_owner(item, pc, npc, description)
             VALUES (?, ?, ?
     """
-    commit_insert(query, args)
+    util.commit_query(query, args)

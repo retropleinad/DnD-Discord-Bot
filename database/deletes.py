@@ -1,6 +1,6 @@
-import sqlite3
+from . import util
 
-temp_path = "../bot/campaign.db"
+path = util.PATH
 
 
 def delete_all(table):
@@ -8,6 +8,13 @@ def delete_all(table):
             DELETE FROM {0}
     """
     query = query.format(table)
-    connection = sqlite3.connect(temp_path)
-    connection.execute(query)
-    connection.close()
+    util.commit_query(query)
+
+
+def delete(table, **kwargs):
+    query = """
+            DELETE FROM {0} WHERE
+    """
+    query = query.format(table)
+    query = util.add_conditions(query, **kwargs)
+    util.commit_query(query)
