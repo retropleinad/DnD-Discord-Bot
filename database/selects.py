@@ -25,13 +25,13 @@ def select_all(table):
     }
 
 
-def select(table, **kwargs):
+def select(table, conditions):
     query = """
             SELECT * FROM {0}
             WHERE
     """
     query = query.format(table)
-    query = util.add_conditions(query, **kwargs)
+    query = util.add_conditions(query, conditions)
 
     connection = sqlite3.connect(path)
     cursor = connection.cursor()

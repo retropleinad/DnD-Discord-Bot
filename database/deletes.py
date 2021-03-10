@@ -11,10 +11,10 @@ def delete_all(table):
     util.commit_query(query)
 
 
-def delete(table, **kwargs):
+def delete(table, conditions):
     query = """
             DELETE FROM {0} WHERE
     """
     query = query.format(table)
-    query = util.add_conditions(query, **kwargs)
+    query = util.add_conditions(query, conditions)
     util.commit_query(query)

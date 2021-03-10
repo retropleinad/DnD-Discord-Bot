@@ -13,13 +13,13 @@ def commit_query(query, args=None):
     connection.close()
 
 
-def add_conditions(query, **kwargs):
+def add_conditions(query, conditions):
     output = query
     index = 0
-    for key, value in kwargs.items():
+    for key, value in conditions.items():
         output += key + "=" + "\"" + str(value) + "\""
         index += 1
-        if index != len(kwargs.items()):
+        if index != len(conditions.items()):
             output += " AND "
     return output
 
