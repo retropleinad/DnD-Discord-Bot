@@ -1,6 +1,6 @@
 import sqlite3
 
-temp_path = "database/campaign.db"
+temp_path = "../bot/campaign.db"
 
 
 def commit_insert(query, args):
@@ -19,7 +19,7 @@ def insert_region(name, description):
     commit_insert(query, args)
 
 
-def insert_location(name, description, region):
+def insert_location(name, description, region="NULL"):
     args = (name, description, region)
     query = """
             INSERT INTO location(name, description, region)

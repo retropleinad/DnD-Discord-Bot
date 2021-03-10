@@ -14,7 +14,7 @@ Tables:
 
 """
 
-temp_path = "database/campaign.db"
+temp_path = "../bot/campaign.db"
 
 tables = (
     """
@@ -27,7 +27,7 @@ tables = (
     """
         CREATE TABLE location (
             location_id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
+            name TEXT UNIQUE NOT NULL,
             description TEXT,
             region INTEGER,
             FOREIGN KEY(region) REFERENCES region(region_id)
@@ -36,7 +36,7 @@ tables = (
     """
         CREATE TABLE organization (
             organization_id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
+            name TEXT UNIQUE NOT NULL,
             description TEXT,
             region INTEGER,
             headquarters INTEGER,
@@ -83,7 +83,7 @@ tables = (
         CREATE TABLE items (
             item_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
-            description TEXT,
+            description TEXT
         )
     """,
     """
@@ -97,6 +97,7 @@ tables = (
             FOREIGN KEY(pc) references pcs(pc_id),
             FOREIGN KEY(npc) references npcs(npc_id),
             FOREIGN KEY(organization) references organization(organization_id)
+        )
     """
 )
 
