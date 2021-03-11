@@ -1,7 +1,6 @@
 import os
 import sqlite3
 
-import discord
 from discord.ext import commands
 
 from dotenv import load_dotenv
@@ -9,6 +8,10 @@ from dotenv import load_dotenv
 from database import inserts
 from database import selects
 from database import deletes
+from database import updates
+
+from bot import error_messages
+from bot import util
 
 TOKEN = ""
 bot = commands.Bot(command_prefix="!")
@@ -17,10 +20,6 @@ bot = commands.Bot(command_prefix="!")
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-
-
-INVALID_CATEGORY = "Please choose an acceptable category. Available categories are : " \
-                           "region, location, organization, class, player-characters, npcs, items, and item-owner"
 
 
 @bot.command(name="new")
@@ -45,23 +44,23 @@ async def new(ctx, table, *args):
         elif table == "item-owner":
             pass
         else:
-            await ctx.send(INVALID_CATEGORY)
+            await ctx.send(error_messages.INVALID_CATEGORY)
     except IndexError:
-        await ctx.send("Please enter the correct amount of information for the category.")
+        await ctx.send(error_messages.ENTRY_LENGTH)
 
 
 @bot.command(name="list-all")
 async def list_all(ctx, table):
     try:
-        select = selects.select_all(table)
+        results = selects.select_all(table)
 
-        titles = select["titles"]
+        titles = results["titles"]
         title_string = " | "
         for title in titles:
             title_string += title + " | "
         await ctx.send(title_string)
 
-        data = select["data"]
+        data = results["data"]
         for entry in data:
             entry_string = " | "
             for point in entry:
@@ -69,7 +68,19 @@ async def list_all(ctx, table):
             await ctx.send(entry_string)
 
     except sqlite3.OperationalError:
-        await ctx.send(INVALID_CATEGORY)
+        await ctx.send(error_messages.INVALID_CATEGORY)
+
+
+@bot.command(name="select")
+async def select(ctx, table, *args):
+    try:
+        conditions = util.trim_args(*args)
+        output = selects.select(table, conditions)
+        await ctx.send(output)
+    except IndexError:
+        await ctx.send(error_messages.CONDITION_SYNTAX)
+    except sqlite3.OperationalError:
+        await ctx.send(error_messages.INVALID_CATEGORY)
 
 
 @bot.command(name="delete-all")
@@ -78,7 +89,29 @@ async def delete_all(ctx, table):
         deletes.delete_all(table)
         await ctx.send("Successfully deleted all from: " + table)
     except sqlite3.OperationalError:
-        await ctx.send(INVALID_CATEGORY)
+        await ctx.send(error_messages.INVALID_CATEGORY)
+
+
+@bot.command(name="delete")
+async def delete(ctx, table, *args):
+    try:
+        conditions = util.trim_args(*args)
+        deletes.delete(table, conditions)
+        await ctx.send("Deleted Successfully!")
+    except IndexError:
+        await ctx.send(error_messages.CONDITION_SYNTAX)
+    except sqlite3.OperationalError:
+        await ctx.send(error_messages.INVALID_CATEGORY)
+
+
+@bot.command(name="edit")
+async def edit(ctx, table, *args):
+    try:
+        conditions = util.trim_args(*args)
+    except IndexError:
+        await ctx.send(error_messages.CONDITION_SYNTAX)
+    except sqlite3.OperationalError:
+        await ctx.send(error_messages.INVALID_CATEGORY)
 
 
 bot.run(TOKEN)
