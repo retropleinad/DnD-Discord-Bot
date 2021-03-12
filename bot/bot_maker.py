@@ -1,6 +1,7 @@
 import os
 import sqlite3
 
+import discord
 from discord.ext import commands
 
 from dotenv import load_dotenv
@@ -69,17 +70,22 @@ async def list_all(ctx, table):
 
     except sqlite3.OperationalError:
         await ctx.send(error_messages.INVALID_CATEGORY)
+    except discord.ext.commands.errors.MissingRequiredArgument:
+        await ctx.send(error_messages.INVALID_CATEGORY)
+
 
 
 @bot.command(name="select")
 async def select(ctx, table, *args):
     try:
-        conditions = util.trim_args(*args)
+        conditions = util.trim_args(args)
         output = selects.select(table, conditions)
         await ctx.send(output)
     except IndexError:
         await ctx.send(error_messages.CONDITION_SYNTAX)
     except sqlite3.OperationalError:
+        await ctx.send(error_messages.INVALID_CATEGORY)
+    except discord.ext.commands.errors.MissingRequiredArgument:
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
@@ -90,27 +96,37 @@ async def delete_all(ctx, table):
         await ctx.send("Successfully deleted all from: " + table)
     except sqlite3.OperationalError:
         await ctx.send(error_messages.INVALID_CATEGORY)
+    except discord.ext.commands.errors.MissingRequiredArgument:
+        await ctx.send(error_messages.INVALID_CATEGORY)
 
 
 @bot.command(name="delete")
 async def delete(ctx, table, *args):
     try:
-        conditions = util.trim_args(*args)
+        conditions = util.trim_args(args)
         deletes.delete(table, conditions)
         await ctx.send("Deleted Successfully!")
     except IndexError:
         await ctx.send(error_messages.CONDITION_SYNTAX)
     except sqlite3.OperationalError:
         await ctx.send(error_messages.INVALID_CATEGORY)
+    except discord.ext.commands.errors.MissingRequiredArgument:
+        await ctx.send(error_messages.INVALID_CATEGORY)
 
 
 @bot.command(name="edit")
 async def edit(ctx, table, *args):
     try:
-        conditions = util.trim_args(*args)
+        entries = util.split_tuple(args, ":")
+        conditions = util.trim_args(entries[0])
+        changes = util.trim_args(entries[1])
+        updates.update(table, changes=changes, conditions=conditions)
+        await ctx.send("Changed data successfully!")
     except IndexError:
         await ctx.send(error_messages.CONDITION_SYNTAX)
     except sqlite3.OperationalError:
+        await ctx.send(error_messages.INVALID_CATEGORY)
+    except discord.ext.commands.errors.MissingRequiredArgument:
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
