@@ -19,20 +19,22 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="!")
 
+help_messages = {
+    "new": "filler",
+    "list-all": "filler",
+    "select": "filler",
+    "delete-all": "filler",
+    "delete": "filler",
+    "edit": "filler"
+}
+
 
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
 
 
-@bot.command(name="test")
-async def test(ctx):
-    await ctx.send("enter the message")
-    message = await bot.wait_for("message",)
-    await ctx.send(message)
-
-
-@bot.command(name="new")
+@bot.command(name="new", help=help_messages["new"])
 async def new(ctx, table, *args):
     try:
         table = table.lower().strip()
@@ -59,7 +61,7 @@ async def new(ctx, table, *args):
         await ctx.send(error_messages.ENTRY_LENGTH)
 
 
-@bot.command(name="list-all")
+@bot.command(name="list-all", help=help_messages["list-all"])
 async def list_all(ctx, table):
     try:
         results = selects.select_all(table)
@@ -83,7 +85,7 @@ async def list_all(ctx, table):
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
-@bot.command(name="select")
+@bot.command(name="select", help=help_messages["select"])
 async def select(ctx, table, *args):
     try:
         conditions = util.trim_args(args)
@@ -97,7 +99,7 @@ async def select(ctx, table, *args):
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
-@bot.command(name="delete-all")
+@bot.command(name="delete-all", help=help_messages["delete-all"])
 async def delete_all(ctx, table):
     try:
         deletes.delete_all(table)
@@ -108,7 +110,7 @@ async def delete_all(ctx, table):
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
-@bot.command(name="delete")
+@bot.command(name="delete", help=help_messages["delete"])
 async def delete(ctx, table, *args):
     try:
         conditions = util.trim_args(args)
@@ -122,7 +124,7 @@ async def delete(ctx, table, *args):
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
-@bot.command(name="edit")
+@bot.command(name="edit", help=help_messages["edit"])
 async def edit(ctx, table, *args):
     try:
         entries = util.split_tuple(args, ":")
