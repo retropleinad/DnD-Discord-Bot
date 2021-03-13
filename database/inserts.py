@@ -2,7 +2,12 @@ from . import util
 
 path = util.PATH
 
+"""
+This file contains methods to insert data into different tables
+"""
 
+
+# Insert into the region table
 def insert_region(name, description):
     args = (name, description)
     query = """
@@ -12,6 +17,7 @@ def insert_region(name, description):
     util.commit_query(query, args)
 
 
+# Insert into the location table
 def insert_location(name, description, region="NULL"):
     args = (name, description, region)
     query = """
@@ -21,6 +27,7 @@ def insert_location(name, description, region="NULL"):
     util.commit_query(query, args)
 
 
+# Insert into the organization table
 def insert_organization(name, description, region, headquarters):
     args = (name, description, region, headquarters)
     query = """
@@ -30,6 +37,7 @@ def insert_organization(name, description, region, headquarters):
     util.commit_query(query, args)
 
 
+# Insert into the class table
 def insert_class(name, description, source, page):
     args = (name, description, source, page)
     query = """
@@ -39,6 +47,7 @@ def insert_class(name, description, source, page):
     util.commit_query(query, args)
 
 
+# Insert into the player characters table
 def insert_pcs(player, name, description, alive, dnd_class, origin, area):
     args = (player, name, description, alive, dnd_class, origin, area)
     query = """
@@ -48,6 +57,7 @@ def insert_pcs(player, name, description, alive, dnd_class, origin, area):
     util.commit_query(query, args)
 
 
+# Insert into the npcs table
 def insert_npcs(name, description, region, headquarters):
     args = (name, description, region, headquarters)
     query = """
@@ -57,6 +67,7 @@ def insert_npcs(name, description, region, headquarters):
     util.commit_query(query, args)
 
 
+# Insert into the items table
 def insert_item(name, description):
     args = (name, description)
     query = """
@@ -66,6 +77,7 @@ def insert_item(name, description):
     util.commit_query(query, args)
 
 
+# Insert into the owner table
 def insert_owner(item, pc, npc, organization):
     args = (item, pc, npc, organization)
     query = """

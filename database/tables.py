@@ -14,7 +14,7 @@ Tables:
 
 """
 
-temp_path = "../bot/campaign.db"
+temp_path = "campaign.db"
 
 tables = (
     """
