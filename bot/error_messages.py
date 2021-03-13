@@ -1,3 +1,7 @@
+"""
+This file holds error messages that are output by the bot in Discord whenever the user incorrectly enters information
+"""
+
 
 INVALID_CATEGORY = "Please choose an acceptable category. Available categories are : " \
                            "region, location, organization, class, player-characters, npcs, items, and item-owner"

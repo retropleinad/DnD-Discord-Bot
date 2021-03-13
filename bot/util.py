@@ -1,5 +1,10 @@
 
+"""
+This file contains helper methods for the bot package
+"""
 
+
+# Trims arguments and places them in a dict
 def trim_args(args):
     output = {}
     for arg in args:
@@ -8,6 +13,7 @@ def trim_args(args):
     return output
 
 
+# Splits a tuple around the wedge argument
 def split_tuple(args, wedge):
     first_half = []
     second_half = []

@@ -19,6 +19,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="!")
 
+# Messages that appear when the user hits !help
 help_messages = {
     "new": "filler",
     "list-all": "filler",
@@ -34,6 +35,7 @@ async def on_ready():
     print(f'{bot.user} has connected to Discord!')
 
 
+# Used to add a new entry to a table
 @bot.command(name="new", help=help_messages["new"])
 async def new(ctx, table, *args):
     try:
@@ -54,13 +56,14 @@ async def new(ctx, table, *args):
         elif table == "items":
             inserts.insert_item(name=args[0], description=args[1])
         elif table == "item-owner":
-            pass
+            inserts.insert_owner(item=args[0], pc=args[1], npc=args[2], organization=args[3])
         else:
             await ctx.send(error_messages.INVALID_CATEGORY)
     except IndexError:
         await ctx.send(error_messages.ENTRY_LENGTH)
 
 
+# List every entry in a table
 @bot.command(name="list-all", help=help_messages["list-all"])
 async def list_all(ctx, table):
     try:
@@ -85,6 +88,7 @@ async def list_all(ctx, table):
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
+# Select an entry from a table
 @bot.command(name="select", help=help_messages["select"])
 async def select(ctx, table, *args):
     try:
@@ -99,6 +103,7 @@ async def select(ctx, table, *args):
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
+# Delete every entry in a table
 @bot.command(name="delete-all", help=help_messages["delete-all"])
 async def delete_all(ctx, table):
     try:
@@ -110,6 +115,7 @@ async def delete_all(ctx, table):
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
+# Delete a particular entry in a table
 @bot.command(name="delete", help=help_messages["delete"])
 async def delete(ctx, table, *args):
     try:
@@ -124,6 +130,7 @@ async def delete(ctx, table, *args):
         await ctx.send(error_messages.INVALID_CATEGORY)
 
 
+# Edit an entry in a table
 @bot.command(name="edit", help=help_messages["edit"])
 async def edit(ctx, table, *args):
     try:
