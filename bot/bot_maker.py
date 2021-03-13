@@ -14,13 +14,22 @@ from database import updates
 from bot import error_messages
 from bot import util
 
-TOKEN = ""
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
+
 bot = commands.Bot(command_prefix="!")
 
 
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
+
+
+@bot.command(name="test")
+async def test(ctx):
+    await ctx.send("enter the message")
+    message = await bot.wait_for("message",)
+    await ctx.send(message)
 
 
 @bot.command(name="new")
@@ -72,7 +81,6 @@ async def list_all(ctx, table):
         await ctx.send(error_messages.INVALID_CATEGORY)
     except discord.ext.commands.errors.MissingRequiredArgument:
         await ctx.send(error_messages.INVALID_CATEGORY)
-
 
 
 @bot.command(name="select")
