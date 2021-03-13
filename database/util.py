@@ -1,6 +1,6 @@
 import sqlite3
 
-PATH = "../bot/campaign.db"
+PATH = "../database/campaign.db"
 
 
 def commit_query(query, args=None):
