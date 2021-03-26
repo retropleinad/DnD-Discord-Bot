@@ -21,12 +21,21 @@ bot = commands.Bot(command_prefix="!")
 
 # Messages that appear when the user hits !help
 help_messages = {
-    "new": "filler",
-    "list-all": "filler",
-    "select": "filler",
-    "delete-all": "filler",
-    "delete": "filler",
-    "edit": "filler"
+    "new": "Insert !new followed by the type of item, then add in the entries."
+           "For example: !new region Drydock \"the main city\"",
+    "list-all": "Insert !list-all followed by the type of item. For example: !list-all region",
+    "select": "Insert !select followed by the type of item and the descriptors for that item. "
+              "Note that a space should not exist between descriptor category and value. "
+              "For example: !select region name=Drydock",
+    "delete-all": "Insert !delete-all followed by the category name to clear everything from that category. "
+                  "For example: !delete-all region",
+    "delete": "Insert !delete followed by the type of item and the descriptors for that item. "
+              "Note that a space should not exist between descriptor category and value. "
+              "For example: !delete region name=Drydock",
+    "edit": "Insert !select followed by the type of item and the descriptors for that item. "
+            "Note that a space should not exist between descriptor category and value. "
+            "Insert a : between the old descriptors and the desired changes"
+            "For example: !edit region name=Drydock : name=Dockdry"
 }
 
 
@@ -148,6 +157,3 @@ async def edit(ctx, table, *args):
 
 
 bot.run(TOKEN)
-
-    
-
