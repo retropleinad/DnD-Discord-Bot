@@ -10,6 +10,7 @@ from database import inserts
 from database import selects
 from database import deletes
 from database import updates
+from database import util as db_util
 
 from bot import error_messages
 from bot import util
@@ -35,7 +36,9 @@ help_messages = {
     "edit": "Insert !select followed by the type of item and the descriptors for that item. "
             "Note that a space should not exist between descriptor category and value. "
             "Insert a : between the old descriptors and the desired changes"
-            "For example: !edit region name=Drydock : name=Dockdry"
+            "For example: !edit region name=Drydock : name=Dockdry",
+    "sqlite": "Directly run an SQLite query. Type !sqlite then follow it with the query. "
+              "For example: !sqlite SELECT * FROM regions"
 }
 
 
@@ -152,6 +155,22 @@ async def edit(ctx, table, *args):
         await ctx.send(error_messages.CONDITION_SYNTAX)
     except sqlite3.OperationalError:
         await ctx.send(error_messages.INVALID_CATEGORY)
+    except discord.ext.commands.errors.MissingRequiredArgument:
+        await ctx.send(error_messages.INVALID_CATEGORY)
+
+
+# Run an SQLite query from Discord
+@bot.command(name="sqlite", help=help_messages["sqlite"])
+async def sqlite(ctx, *args):
+    query = ""
+    for arg in args:
+        query += arg
+        query += " "
+    try:
+        db_util.commit_query(query)
+        await ctx.send("Query operated successfully")
+    except sqlite3.OperationalError:
+        await ctx.send(error_messages.QUERY_SYNTAX)
     except discord.ext.commands.errors.MissingRequiredArgument:
         await ctx.send(error_messages.INVALID_CATEGORY)
 
