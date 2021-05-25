@@ -20,7 +20,7 @@ PATH = util.PATH
 
 tables = (
     """
-        CREATE TABLE players (
+        CREATE TABLE player (
             player_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL
         )

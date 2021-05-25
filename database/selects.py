@@ -45,10 +45,12 @@ def select(table, conditions):
 # Select all characters (player and npc) in Drydock
 def drydock_chars():
     query = """
-        SELECT pc_id, name, player
+        SELECT pc_id, name, player.name AS player_name
         FROM pcs
         INNER JOIN region
             ON pcs.region_id = region.region_id
+        INNER JOIN players
+            ON pcs.player_id = player.player_id
         WHERE region.region_id = (
             SELECT region.region_id
             FROM region
@@ -70,8 +72,10 @@ def drydock_chars():
 
 def list_dead():
     query = """
-        SELECT pc_id, name, player
+        SELECT pc_id, name, player.name
         FROM pcs
+        INNER JOIN player
+            ON pcs.player_id = player.player_id
         WHERE NOT alive
         UNION
         SELECT npc_id, name
@@ -83,9 +87,11 @@ def list_dead():
 
 def list_living():
     query = """
-        SELECT pc_id, name, player
+        SELECT pc_id, name, player.name
         FROM pcs
         WHERE alive
+        INNER JOIN player
+            ON pcs.player_id = player.player_id
         UNION
         SELECT npc_id, name
         FROM npcs
@@ -122,14 +128,18 @@ def class_chars(class_id=None, class_name=None):
         raise TypeError("Both class_id and class_name cannot be None")
     elif class_name is None:
         query = """
-            SELECT pc_id, name, player
+            SELECT pc_id, name, player.name
             FROM pcs
+            INNER JOIN player
+                ON pcs.player_id = player.player_id
             WHERE class_id = {0}
         """.format(class_id)
     else:
         query = """
-            SELECT pc_id, name, player 
+            SELECT pc_id, name, player.name 
             FROM pcs
+            INNER JOIN player
+                ON pcs.player_id = player.player_id
             WHERE class_id = (
                 SELECT class_id FROM class
                 WHERE class.name = {0}
@@ -143,8 +153,10 @@ def org_chars(org_id=None, org_name=None):
         raise TypeError("Both org_id and org_name cannot be None")
     elif org_name is None:
         query = """
-            SELECT pc_id, name, player
+            SELECT pc_id, name, player.name
             FROM pcs
+            INNER JOIN player
+                ON pcs.player_id = player.player_id
             WHERE organization_id = {0}
             UNION
             SELECT npc_id, name
@@ -153,8 +165,10 @@ def org_chars(org_id=None, org_name=None):
         """.format(org_id)
     else:
         query = """
-            SELECT pc_id, name, player
+            SELECT pc_id, name, player.name
             FROM pcs
+            INNER JOIN player
+                ON pcs.player_id = player.player_id
             WHERE organization_id = (
                 SELECT organization_id FROM organization
                 WHERE organization.name = {0}
@@ -168,3 +182,28 @@ def org_chars(org_id=None, org_name=None):
             )
         """.format(org_id)
     return util.fetch(query)
+
+
+def total_owned(char_id=None, char_name=None):
+    if char_id is None and char_name is None:
+        raise TypeError("Both char_id and char_name cannot be None")
+    elif char_name is None:
+        query = """
+            SELECT pcs.name AS name, COUNT(items.item_id)
+            FROM items
+            INNER JOIN pcs
+                ON pcs.pc_id = items.pc_id
+            WHERE pcs.pc_id = {0}
+            GROUP BY items.pc_id
+            ORDER BY COUNT(items.item_id) DESC
+        """
+    else:
+        query = """
+            SELECT pcs.name AS name, COUNT(items.item_id)
+            FROM items
+            INNER JOIN pcs
+                ON pcs.pc_id = items.pc_id
+            WHERE pcs.name = {0}
+            GROUP BY items.pc_id
+            ORDER BY COUNT(items.item_id) DESC
+        """

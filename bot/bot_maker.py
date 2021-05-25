@@ -44,7 +44,8 @@ help_messages = {
     "list-living": "List all the living characters",
     "items-owned": "List all the items owned by a particular character",
     "class-chars": "List all the characters in a particular class",
-    "org-chars": "List all the characters in a particular organization"
+    "org-chars": "List all the characters in a particular organization",
+    "total-items": "List the total amount of items owned by a particular character"
 }
 
 
@@ -63,14 +64,14 @@ async def new(ctx, table, *args):
         elif table == "location":
             inserts.insert_location(name=args[0], description=args[1], region=args[2])
         elif table == "organization":
-            inserts.insert_organization(name=args[0], description=args[1], region=args[2], headquarters=args[3])
+            inserts.insert_organization(name=args[0], description=args[1], region=args[2])
         elif table == "class":
-            inserts.insert_class(name=args[0], description=args[1], source=args[2], page=args[3])
+            inserts.insert_class(name=args[0], description=args[1], source=args[2])
         elif table == "player-characters":
             inserts.insert_pcs(player=args[0], name=args[1], description=args[2], alive=args[3], dnd_class=args[4],
                                origin=args[5], area=args[6])
         elif table == "npcs":
-            inserts.insert_npcs(name=args[0], description=args[1], region=args[2], headquarters=args[3])
+            inserts.insert_npcs(name=args[0], description=args[1], region=args[2])
         elif table == "items":
             inserts.insert_item(name=args[0], description=args[1])
         else:
@@ -196,26 +197,46 @@ async def list_living(ctx):
 
 @bot.command(name="items-owned", help=help_messages["items-owned"])
 async def items_owned(ctx, player):
-    if player.isnumeric():
-        await ctx.send(selects.items_owned(owner_id=player))
-    else:
-        await ctx.send(selects.items_owned(owner_name=player))
+    try:
+        if player.isnumeric():
+            await ctx.send(selects.items_owned(owner_id=player))
+        else:
+            await ctx.send(selects.items_owned(owner_name=player))
+    except sqlite3.OperationalError:
+        await ctx.send(error_messages.QUERY_SYNTAX)
 
 
 @bot.command(name="class-chars", help=help_messages["class-chars"])
 async def class_chars(ctx, dnd_class):
-    if dnd_class.isnumeric():
-        await ctx.send(selects.class_chars(class_id=dnd_class))
-    else:
-        await ctx.send(selects.class_chars(class_name=dnd_class))
+    try:
+        if dnd_class.isnumeric():
+            await ctx.send(selects.class_chars(class_id=dnd_class))
+        else:
+            await ctx.send(selects.class_chars(class_name=dnd_class))
+    except sqlite3.OperationalError:
+        await ctx.send(error_messages.QUERY_SYNTAX)
 
 
 @bot.command(name="org-chars", help=help_messages["org-chars"])
 async def org_chars(ctx, org):
-    if org.isnumeric():
-        await ctx.send(selects.org_chars(org_id=org))
-    else:
-        await ctx.send(selects.org_chars(org_name=org))
+    try:
+        if org.isnumeric():
+            await ctx.send(selects.org_chars(org_id=org))
+        else:
+            await ctx.send(selects.org_chars(org_name=org))
+    except sqlite3.OperationalError:
+        await ctx.send(error_messages.QUERY_SYNTAX)
+
+
+@bot.command(name="total-items", help=help_messages["total-items"])
+async def total_items(ctx, character):
+    try:
+        if character.isnumeric():
+            await ctx.send(selects.total_owned(char_id=character))
+        else:
+            await ctx.send(selects.total_owned(char_name=character))
+    except sqlite3.OperationalError:
+        await ctx.send(error_messages.QUERY_SYNTAX)
 
 
 bot.run(TOKEN)
