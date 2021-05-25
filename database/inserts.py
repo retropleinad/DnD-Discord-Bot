@@ -18,7 +18,8 @@ def insert_region(name, description):
 
 
 # Insert into the location table
-def insert_location(name, description, region="NULL"):
+def insert_location(name, description, region):
+    region_name = "SELECT region_id from region WHERE name = {0}".format(region)
     args = (name, description, region)
     query = """
             INSERT INTO location(name, description, region)

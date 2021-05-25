@@ -18,6 +18,15 @@ def commit_query(query, args=None):
     connection.close()
 
 
+def fetch(query):
+    connection = sqlite3.connect(PATH)
+    cursor = connection.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    connection.close()
+    return data
+
+
 # Takes a dict of conditions (such as "name":"Alex") and formats it into an SQL query
 def add_conditions(query, conditions):
     output = query
