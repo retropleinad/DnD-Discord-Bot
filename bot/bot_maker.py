@@ -43,7 +43,7 @@ help_messages = {
     "list-dead": "List all the dead characters",
     "list-living": "List all the living characters",
     "items-owned": "List all the items owned by a particular character",
-    "class-characters": "List all the characters in a particular class",
+    "class-chars": "List all the characters in a particular class",
     "org-chars": "List all the characters in a particular organization"
 }
 
@@ -196,20 +196,26 @@ async def list_living(ctx):
 
 @bot.command(name="items-owned", help=help_messages["items-owned"])
 async def items_owned(ctx, player):
-    if len(player) < 3 and int(player) < 100:
-        pass
+    if player.isnumeric():
+        await ctx.send(selects.items_owned(owner_id=player))
     else:
-        pass
+        await ctx.send(selects.items_owned(owner_name=player))
 
 
 @bot.command(name="class-chars", help=help_messages["class-chars"])
 async def class_chars(ctx, dnd_class):
-    pass
+    if dnd_class.isnumeric():
+        await ctx.send(selects.class_chars(class_id=dnd_class))
+    else:
+        await ctx.send(selects.class_chars(class_name=dnd_class))
 
 
 @bot.command(name="org-chars", help=help_messages["org-chars"])
 async def org_chars(ctx, org):
-    pass
+    if org.isnumeric():
+        await ctx.send(selects.org_chars(org_id=org))
+    else:
+        await ctx.send(selects.org_chars(org_name=org))
 
 
 bot.run(TOKEN)

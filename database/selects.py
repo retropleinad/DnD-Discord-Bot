@@ -86,7 +86,9 @@ def list_living():
 
 # List all items owned by a particular character
 def items_owned(owner_id=None, owner_name=None):
-    if owner_name is None:
+    if owner_id is None and owner_name is None:
+        raise TypeError("Both owner_id and owner_name cannot be None")
+    elif owner_name is None:
         query = """
             SELECT item_id, name 
             FROM items
@@ -106,7 +108,9 @@ def items_owned(owner_id=None, owner_name=None):
 
 # List all characters belonging to a particular class
 def class_chars(class_id=None, class_name=None):
-    if class_name is None:
+    if class_id is None and class_name is None:
+        raise TypeError("Both class_id and class_name cannot be None")
+    elif class_name is None:
         query = """
             SELECT pc_id, name, player
             FROM pcs
@@ -125,7 +129,9 @@ def class_chars(class_id=None, class_name=None):
 
 
 def org_chars(org_id=None, org_name=None):
-    if org_name is None:
+    if org_id is None and org_name is None:
+        raise TypeError("Both org_id and org_name cannot be None")
+    elif org_name is None:
         query = """
             SELECT pc_id, name, player
             FROM pcs
