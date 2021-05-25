@@ -1,5 +1,7 @@
 import sqlite3
 
+from . import util
+
 """
 This file holds the CREATE TABLE sqlite commands to build the database. 
 
@@ -14,9 +16,15 @@ Tables:
 
 """
 
-temp_path = "campaign.db"
+PATH = util.PATH
 
 tables = (
+    """
+        CREATE TABLE players (
+            player_id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL
+        )
+    """,
     """
         CREATE TABLE region (
             region_id INTEGER PRIMARY KEY,
@@ -29,8 +37,8 @@ tables = (
             location_id INTEGER PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
             description TEXT,
-            region INTEGER,
-            FOREIGN KEY(region) REFERENCES region(region_id)
+            region_id INTEGER,
+            FOREIGN KEY(region_id) REFERENCES region(region_id)
         )
     """,
     """
@@ -38,32 +46,37 @@ tables = (
             organization_id INTEGER PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
             description TEXT,
-            region INTEGER,
-            headquarters INTEGER,
-            FOREIGN KEY(region) REFERENCES region(region_id),
-            FOREIGN KEY(headquarters) REFERENCES location(location_id)
+            region_id INTEGER,
+            FOREIGN KEY(region_id) REFERENCES region(region_id)
         ) 
+    """,
+    """
+        CREATE TABLE source (
+            source_id INTEGER PRIMARY KEY,
+            title TEXT UNIQUE NOT NULL
+        )
     """,
     """
         CREATE TABLE class (
             class_id INTEGER PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
             description TEXT,
-            source TEXT,
-            page INTEGER
+            source_id INTEGER,
+            FOREIGN KEY(source_id) REFERENCES source(source_id)
         )
     """,
     """
         CREATE TABLE pcs (
             pc_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
-            player TEXT NOT NULL,
             description TEXT,
             alive BOOL DEFAULT TRUE,
+            player_id INTEGER,
             class_id INTEGER,
             origin INTEGER,
             region_id INTEGER,
             organization_id INTEGER,
+            FOREIGN KEY(player_id) REFERENCES player(player_id),
             FOREIGN KEY(class_id) REFERENCES class(class_id),
             FOREIGN KEY(origin) REFERENCES region(region_id),
             FOREIGN KEY(region_id) REFERENCES region(region_id),
@@ -86,14 +99,14 @@ tables = (
         CREATE TABLE items (
             item_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
-            pc_id INT,
             description TEXT,
+            pc_id INT,
             FOREIGN KEY(pc_id) REFERENCES pcs(pc_id)
         )
     """
 )
 
-connection = sqlite3.connect(temp_path)
+connection = sqlite3.connect(PATH)
 
 for table in tables:
     connection.execute(table)

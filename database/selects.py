@@ -49,11 +49,21 @@ def drydock_chars():
         FROM pcs
         INNER JOIN region
             ON pcs.region_id = region.region_id
+        WHERE region.region_id = (
+            SELECT region.region_id
+            FROM region
+            WHERE region.name = Drydock
+        )
         UNION
         SELECT npc_id, name
         FROM npcs
         INNER JOIN region
-            ON npcs.region_id = region.region_id;
+            ON npcs.region_id = region.region_id
+        WHERE region.region_id = (
+            SELECT region.region_id
+            FROM region
+            WHERE region.name = Drydock
+        )
     """
     return util.fetch(query)
 
