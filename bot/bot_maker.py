@@ -38,7 +38,13 @@ help_messages = {
             "Insert a : between the old descriptors and the desired changes"
             "For example: !edit region name=Drydock : name=Dockdry",
     "sqlite": "Directly run an SQLite query. Type !sqlite then follow it with the query. "
-              "For example: !sqlite SELECT * FROM regions"
+              "For example: !sqlite SELECT * FROM regions",
+    "drydock-characters": "List all the player and npc characters in Drydock.",
+    "list-dead": "List all the dead characters",
+    "list-living": "List all the living characters",
+    "items-owned": "List all the items owned by a particular character",
+    "class-characters": "List all the characters in a particular class",
+    "org-chars": "List all the characters in a particular organization"
 }
 
 
@@ -67,8 +73,6 @@ async def new(ctx, table, *args):
             inserts.insert_npcs(name=args[0], description=args[1], region=args[2], headquarters=args[3])
         elif table == "items":
             inserts.insert_item(name=args[0], description=args[1])
-        elif table == "item-owner":
-            inserts.insert_owner(item=args[0], pc=args[1], npc=args[2], organization=args[3])
         else:
             await ctx.send(error_messages.INVALID_CATEGORY)
     except IndexError:
@@ -173,6 +177,39 @@ async def sqlite(ctx, *args):
         await ctx.send(error_messages.QUERY_SYNTAX)
     except discord.ext.commands.errors.MissingRequiredArgument:
         await ctx.send(error_messages.INVALID_CATEGORY)
+
+
+@bot.command(name="drydock-characters", help=help_messages["drydock-characters"])
+async def drydock_chars(ctx):
+    await ctx.send(selects.drydock_chars())
+
+
+@bot.command(name="list-dead", help=help_messages["list-dead"])
+async def list_dead(ctx):
+    await ctx.send(selects.list_dead())
+
+
+@bot.command(name="list-living", help=help_messages["list-living"])
+async def list_living(ctx):
+    await ctx.send(selects.list_living())
+
+
+@bot.command(name="items-owned", help=help_messages["items-owned"])
+async def items_owned(ctx, player):
+    if len(player) < 3 and int(player) < 100:
+        pass
+    else:
+        pass
+
+
+@bot.command(name="class-chars", help=help_messages["class-chars"])
+async def class_chars(ctx, dnd_class):
+    pass
+
+
+@bot.command(name="org-chars", help=help_messages["org-chars"])
+async def org_chars(ctx, org):
+    pass
 
 
 bot.run(TOKEN)
